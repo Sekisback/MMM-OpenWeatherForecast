@@ -15,33 +15,31 @@
 
   The OpenWeather OneCall API request looks like this:
 
-    http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&lang={lang}&exclude=minutely&units={units}&lang={lang}
+    https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude=minutely&appid={API key}&units={units}&lang={lang}
 
 *********************************/
 
-var NodeHelper = require("node_helper");
-var axios = require('axios').default; //replaces the deprecated Request library
-var moment = require("moment");
+const Log = require("logger");
+const NodeHelper = require("node_helper");
+const moment = require("moment");
 
 module.exports = NodeHelper.create({
 
-  start: function() {
-    console.log("====================== Starting node_helper for module [" + this.name + "]");
+  start() {
+    Log.log("Starting node_helper for: " + this.name);
   },
 
-  socketNotificationReceived: function(notification, payload){
+  async socketNotificationReceived(notification, payload){
+    var self = this;
     if (notification === "OPENWEATHER_FORECAST_GET") {
-
-      var self = this;
-
       if (payload.apikey == null || payload.apikey == "") {
-        console.log( "[MMM-OpenWeatherForecast] " + moment().format("D-MMM-YY HH:mm") + " ** ERROR ** No API key configured. Get an API key at https://darksky.net" );
+        Log.log( "[MMM-OpenWeatherForecast] " + moment().format("D-MMM-YY HH:mm") + " ** ERROR ** No API key configured. Get an API key at https://openweathermap.org/" );
       } else if (payload.latitude == null || payload.latitude == "" || payload.longitude == null || payload.longitude == "") {
-        console.log( "[MMM-OpenWeatherForecast] " + moment().format("D-MMM-YY HH:mm") + " ** ERROR ** Latitude and/or longitude not provided." );
+        Log.log( "[MMM-OpenWeatherForecast] " + moment().format("D-MMM-YY HH:mm") + " ** ERROR ** Latitude and/or longitude not provided." );
       } else {
 
         //make request to OpenWeather One Call API
-        var url = "https://api.openweathermap.org/data/2.5/onecall?" +
+        var url = payload.apiBaseURL +
           "lat=" + payload.latitude +
           "&lon=" + payload.longitude +
           "&exclude=" + "minutely" +
@@ -49,26 +47,23 @@ module.exports = NodeHelper.create({
           "&units=" + payload.units +
           "&lang=" + payload.language;
 
-        /* 
-          Update 28-Feb-2021: 
-          The old standby Request library has been deprecated.
-          So data fetch is now done with Axios.
-         */
-        axios.get(url)
-          .then(function (response) {
-            // handle success
-            response.data.instanceId = payload.instanceId;
-            self.sendSocketNotification("OPENWEATHER_FORECAST_DATA", response.data);
-          })
-          .catch(function (error) {
-            // handle error
-            console.log( "[MMM-OpenWeatherForecast] " + moment().format("D-MMM-YY HH:mm") + " ** ERROR ** " + error );
-          });
-
-
+        if (typeof self.config !== "undefined"){
+          if (self.config.debug === true){
+            Log.log(self.name+"Fetching url: "+url)
+          }
+        }
+	
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          data.instanceId = payload.instanceId;
+          self.sendSocketNotification("OPENWEATHER_FORECAST_DATA", data);
+        } catch (error) {
+          Log.error("[MMM-OpenWeatherForecast] " + moment().format("D-MMM-YY HH:mm") + " ** ERROR ** " + error);
+        }
       }
+    } else if (notification === "CONFIG") {
+      self.config = payload
     }
   },
-
-
 });

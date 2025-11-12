@@ -1,37 +1,34 @@
 # MMM-OpenWeatherForecast
 
-This a module for <strong>MagicMirror</strong><br>
-https://magicmirror.builders/<br>
-https://github.com/MichMich/MagicMirror
+**MMM-OpenWeatherForecast** is a weather module for [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror).
 
-![Screenshot](/../screenshots/MMM-OpenWeatherForecast.png?raw=true "Screenshot")
+It displays current, hourly and daily forecast information using data from the OpenWeather One Call API.
 
-A weather module that displays current, hourly and daily forecast information
-using data from the OpenWeather One Call API. This is a replacement module for MMM-DarkSkyForecast, now that Dark Sky no longer allows free API access.  This maintains much of the same functionality and adds a few new features.
-
-**NOTE** This module uses the Nunjucks templating system introduced in version 2.2.0 of MagicMirror.  If you're seeing nothing on your display where you expect this module to appear, make sure your MagicMirror version is at least 2.2.0.
-
+![Screenshot](MMM-OpenWeatherForecast.png "Screenshot of the module showing a weather forecast")
 
 ## Installation
 
-1. Navigate into your MagicMirror `modules` folder and execute<br>
-`git clone https://github.com/jclarke0000/MMM-OpenWeatherForecast.git`.
+1. Navigate into your MagicMirror `modules` folder and execute
+  `git clone https://github.com/Tom-Hirschberger/MMM-OpenWeatherForecast`.
 2. Enter the new `MMM-OpenWeatherForecast` directory and execute `npm install`.
-
-
 
 ## Configuration
 
 At a minimum you need to supply the following required configuration parameters:
 
-* `apikey` 
+* `apikey`
 * `latitude`
 * `longitude`
 
-`apikey` needs to be specified as a String, while `latitude` and `longitude` can be specified as either a String or a Number.  Both work fine.
+`apikey` needs to be specified as a String, while `latitude` and `longitude` can be specified as either a String or a Number. Both work fine.
+
+By default the module uses the OpenWeater One Call API in version 3.0 now cause version 2.5 has been shut down in June 2024. If you know what you are doing you can use the config option `apiBaseURL` to specify the URL you like. 
+
+Make sure to subscribe to the new 3.0 API first and wait a couple hours till the subscription is activated. You will need to provide payment information for the new subscription but as long as you stay under the daily free limit (1000 calls at the moment) you will not be charged.
 
 e.g.,
-```
+
+```js
   {
     module: "MMM-OpenWeatherForecast",
     position: "top_right",
@@ -45,12 +42,10 @@ e.g.,
 ```
 
 You need to create a free account with OpenWeather in order to get an API key:
-https://home.openweathermap.org/users/sign_up.
-
-Free tier is fine -- this module will not make anywhere near 60 calls per minute / 1,000,000 requests per month.
+<https://home.openweathermap.org/users/sign_up>.
 
 Find out your latitude and longitude here:
-https://www.latlong.net/.
+<https://www.latlong.net/>.
 
 ### Other optional parameters
 
@@ -62,6 +57,14 @@ https://www.latlong.net/.
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td><code>debug</code></td>
+      <td>If activated some more output is printed to the console (i.e. the URL which is used to fetch the data).<br><br>5<strong>Type</strong> <code>Boolean</code><br>Defaults to <code>false</code></td>
+    </tr>
+    <tr>
+      <td><code>apiBaseURL</code></td>
+      <td>An alternative API URL you want to use. I.e. <code>https://api.openweathermap.org/data/3.0/onecall?</code> for the new One Call 3.0 API.<br><br><strong>Type</strong> <code>String</code><br>Defaults to <code>https://api.openweathermap.org/data/3.0/onecall?</code></td>
+    </tr>
     <tr>
       <td><code>updateInterval</code></td>
       <td>How frequently, in minutes, to poll for data.<br><br><strong>Type</strong> <code>Number</code><br>Defaults to <code>10</code></td>
@@ -76,7 +79,7 @@ https://www.latlong.net/.
     </tr>
     <tr>
       <td><code>language</code></td>
-      <td>The language to be used for display.<br><br><strong>Type</strong> <code>String</code><br>Defaults to the language set for Magic Mirror, but can be overridden with any of the language codes listed here: <a href="https://openweathermap.org/api/one-call-api#multi">https://openweathermap.org/api/one-call-api#multi</a></td>
+      <td>The language to be used for display.<br><br><strong>Type</strong> <code>String</code><br>Defaults to the language set for MagicMirror, but can be overridden with any of the language codes listed here: <a href="https://openweathermap.org/api/one-call-api#multi">https://openweathermap.org/api/one-call-api#multi</a></td>
     </tr>
     <tr>
       <td><code>units</code></td>
@@ -96,7 +99,7 @@ https://www.latlong.net/.
     </tr>
     <tr>
       <td><code>colored</code></td>
-      <td>Whether to present the module in colour or black-and-white.  Note, if set to <code>false</code>, the monochramtic version of your chosen icon set will be forced.<br><br><strong>Type</strong> <code>Boolean</code><br>Defaults to <code>true</code></td>
+      <td>Whether to present the module in colored or black-and-white.  Note, if set to <code>false</code>, the monochromatic version of your chosen icon set will be forced.<br><br><strong>Type</strong> <code>Boolean</code><br>Defaults to <code>true</code></td>
     </tr>
     <tr>
       <td><code>useAnimatedIcons</code></td>
@@ -112,11 +115,11 @@ https://www.latlong.net/.
     </tr>
     <tr>
       <td><code>showFeelsLikeTemp</code></td>
-      <td>Makes the temprature display for current conditions and hourly forecast show the "feels like" temperature instead of the actual temperature.<br><br><strong>Type</strong> <code>Boolean</code><br>Defaults to <code>false</code></td>
+      <td>Makes the temperature display for current conditions and hourly forecast show the "feels like" temperature instead of the actual temperature.<br><br><strong>Type</strong> <code>Boolean</code><br>Defaults to <code>false</code></td>
     </tr>
     <tr>
       <td><code>showCurrentConditions</code></td>
-      <td>Whether to show current temperaure and current conditions icon.<br><br><strong>Type</strong> <code>Boolean</code><br>Defaults to <code>true</code></td>
+      <td>Whether to show current temperature and current conditions icon.<br><br><strong>Type</strong> <code>Boolean</code><br>Defaults to <code>true</code></td>
     </tr>
     <tr>
       <td><code>showSummary</code></td>
@@ -132,7 +135,10 @@ https://www.latlong.net/.
     </tr>
     <tr>
       <td><code>forecastHeaderText</code></td>
-      <td>Text for the header above the forecast display.  Set to <code>""</code> to hide this header altogether.  Also doesn't appear if <code>showHourlyForecast</code> and <code>showDailylyForecast</code> are both set to <code>false</code>.<br><br><strong>Type</strong> <code>String</code><br>Defaults to <code>"Forecast"</code></td>
+      <td>Text for the header above the forecast display.  Set to <code>""</code> to hide this header altogether.  Also doesn't appear if
+      <code>showHourlyForecast</code> and
+      <code>showDailyForecast</code> are both set to <code>false</code>.<br><br><strong>Type</strong> <code>String</code><br>Defaults to
+      <code>"Forecast"</code></td>
     </tr>
     <tr>
       <td><code>forecastLayout</code></td>
@@ -215,12 +221,13 @@ https://www.latlong.net/.
 
 ## Extras
 
-For each of current conditions, hourly forecast and daily forecast, there are additional data that can be optionally displayed.  Set the corresponding value for each key to either <code>true</code> or <code>false</code> to show or hide the item respectively.
+For each of current conditions, hourly forecast and daily forecast, there are additional data that can be optionally displayed. Set the corresponding value for each key to either `true` or `false` to show or hide the item respectively.
 
-### Valid options for <code>extraCurrentConditions</code>
+### Valid options for `extraCurrentConditions`
 
 This shows all available options:
-```
+
+```js
   extraCurrentConditions: {
     highLowTemp: true,
     precipitation: true,
@@ -236,7 +243,8 @@ This shows all available options:
 ```
 
 This shows just Hi/Low temp display and precipitation:
-```
+
+```js
   extraCurrentConditions: {
     highLowTemp: true,
     precipitation: true,
@@ -251,9 +259,9 @@ This shows just Hi/Low temp display and precipitation:
   },
 ```
 
-### Valid options for <code>hourlyExtras</code>
+### Valid options for `hourlyExtras`
 
-```
+```js
   hourlyExtras: {
     precipitation: true,
     wind: true,
@@ -265,9 +273,9 @@ This shows just Hi/Low temp display and precipitation:
   },
 ```
 
-### Valid options for <code>dailyExtras</code>
+### Valid options for `dailyExtras`
 
-```
+```js
   dailyExtras: {
     precipitation: true,
     sunrise: true,
@@ -282,7 +290,7 @@ This shows just Hi/Low temp display and precipitation:
 
 ## Sample Configuration
 
-```
+```js
   {
     module: "MMM-OpenWeatherForecast",
     position: "top_right",
@@ -349,32 +357,32 @@ This shows just Hi/Low temp display and precipitation:
 
     }
   },
-
 ```
 
 ## Icon Sets
 
-![Icon Sets](icons/iconsets.png?raw=true "Icon Sets")
-
+![Icon Sets](iconsets.png "Icon Sets")
 
 ## Layouts
 
-![Layouts](/../screenshots/forecast-layouts.jpg?raw=true "Layouts")
-
+![Layouts](forecast-layouts.jpg "Layouts")
 
 ## Styling
 
-This module is set to be 320px wide by default.  If you wish to override it, you can add the following to your `custom.css` file:
+This module is set to be 320px wide by default. If you wish to override it, you can add the following to your `custom.css` file:
 
-```
+```css
 .MMM-OpenWeatherForecast .module-content {
   width: 500px; /* adjust this as desired */
 }
 ```
 
-Most important elements of this module have one or more class names applied. Examine the `MMM-OpenWeatherForecast.css`, `mmm-openweather-forecast.njk`, or inspect elements directly with your browser of choice to determine what class you would like to override (Pro tip:  If you start MagicMirror with `npm start dev` you'll get Chrome dev tools that will allow you to directly inspect any HTML element in the mdoule).
-
+Most important elements of this module have one or more class names applied. Examine the `MMM-OpenWeatherForecast.css`, `mmm-openweather-forecast.njk`, or inspect elements directly with your browser of choice to determine what class you would like to override (Pro tip: If you start MagicMirror with `npm start dev` you'll get Chrome dev tools that will allow you to directly inspect any HTML element in the module).
 
 ## For Module Developers
 
-This module broadcasts a notification when it recieves a weather update.  The notification is `OPENWEATHER_FORECAST_WEATHER_UPDATE` and the payload contains OpenWeather's JSON weather forecast object for the One Call API.  For details on the weather object, see https://openweathermap.org/api/one-call-api.
+This module broadcasts a notification when it receives a weather update. The notification is `OPENWEATHER_FORECAST_WEATHER_UPDATE` and the payload contains OpenWeather's JSON weather forecast object for the One Call API. For details on the weather object, see <https://openweathermap.org/api/one-call-3>.
+
+## Credits
+
+This module based on [MMM-DarkSkyForecast](https://github.com/jclarke0000/MMM-DarkSkyForecast) from [Jeff Clarke](https://github.com/jclarke0000).
